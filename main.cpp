@@ -1,43 +1,104 @@
-#include<algorithm>//sort,“ñ•ª’Tõ,‚È‚Ç
-#include<bitset>//ŒÅ’è’·bitW‡
-#include<cmath>//pow,log‚È‚Ç
-#include<complex>//•¡‘f”
-#include<deque>//—¼’[ƒAƒNƒZƒX‚ÌƒLƒ…[
-#include<functional>//sort‚Ìgreater
-#include<iomanip>//setprecision(•‚“®¬”“_‚Ìo—Í‚ÌŒë·)
-#include<iostream>//“üo—Í
-#include<iterator>//W‡‰‰Z(ÏW‡,˜aW‡,·W‡‚È‚Ç)
-#include<map>//map(«‘)
-#include<numeric>//iota(®”—ñ‚Ì¶¬),gcd‚Ælcm(c++17)
-#include<queue>//ƒLƒ…[
-#include<set>//W‡
-#include<stack>//ƒXƒ^ƒbƒN
-#include<string>//•¶š—ñ
-#include<unordered_map>//ƒCƒeƒŒ[ƒ^‚ ‚é‚¯‚Ç‡˜•Û‚µ‚È‚¢map
-#include<unordered_set>//ƒCƒeƒŒ[ƒ^‚ ‚é‚¯‚Ç‡˜•Û‚µ‚È‚¢set
-#include<utility>//pair
-#include<vector>//‰Â•Ï’·”z—ñ
+#include <bits/stdc++.h>
 
 using namespace std;
-typedef long long ll;
 
-//ƒ}ƒNƒ
-#define REP(i,n) for(ll i=0;i<(ll)(n);i++)
-#define REPD(i,n) for(ll i=(ll)(n)-1;i>=0;i--)
-#define FOR(i,a,b) for(ll i=(a);i<=(b);i++)
-#define FORD(i,a,b) for(ll i=(a);i>=(b);i--)
-#define ALL(x) (x).begin(),(x).end() //sort‚È‚Ç‚Ìˆø”‚ğÈ—ª‚µ‚½‚¢
-#define SIZE(x) ((ll)(x).size()) //size‚ğsize_t‚©‚çll‚É’¼‚µ‚Ä‚¨‚­
-#define MAX(x) *max_element(ALL(x))
-#define INF 1000000000000 //10^12
-#define MOD 10000007 //10^9+7
-#define PB push_back
-#define MP make_pair
-#define F first
-#define S second
-#define MAXR 100000 //10^5:Å‘å‚Ìrange(‘f”—ñ‹“‚È‚Ç‚Åg—p)
-
-signed main()
+typedef pair<int,int> ii;
+#define INF 111111;
+/*
+Initialization:AdjMat[i][j] = (i->jãŒã‚ã‚Œã°ã€ãã®æã®é‡ã¿ã€‚ãªã‘ã‚Œã°INF)
+Return:AdjMat[i][j] = (i->jã®æœ€çŸ­è·é›¢)
+*/
+void warshallFloyd(vector<vector<int> >& AdjMat)
 {
+    int V = AdjMat.size();
+    for(int i = 0;i < V;++i)
+        for(int j = 0;j < V;++j)
+            for(int k = 0;k < V;++k)
+                AdjMat[i][j] = min(AdjMat[i][j],AdjMat[i][k]+AdjMat[k][j]);
+                //AdjMat[i][j] |= AdjMat[i][k] && AdjMat[k][j] ã§ã€AdjMat[i][j] = 1ã®ã¨ãiã‹ã‚‰jã¸ã®pathãŒå­˜åœ¨ã€‚Initializetion:AdjMat[i][j] = (i->jãŒã‚ã‚Œã°ã€1ã€‚ãªã‘ã‚Œã°0)
+                //AdjMat[i][j] = min(AdjMat[i][j],max(AdjMat[i][k],AdjMat[k][j]))ã§ã€AdjMat[i][j]ãŒiã‹ã‚‰jã¸ã®minmaxçµŒè·¯ã®æœ€å¤§ã®é‡ã¿
+                //AdjMat[i][j] > 0 && AdjMat[j][i] > 0 ãªã‚‰ã€iã¨jã¯åŒã˜SCCã«ã„ã‚‹ã€‚
+}
 
+/*
+Initialization:AdjMat[i][j] = (i->jãŒã‚ã‚Œã°ã€ãã®æã®é‡ã¿ã€‚ãªã‘ã‚Œã°INF),prev[i][j] = i
+Return:AdjMat[i][j] = (i->jã®æœ€çŸ­è·é›¢),prev[i][j] = (i->jã®æœ€çŸ­çµŒè·¯ã«ãŠã‘ã‚‹jã«åˆ°é”ã™ã‚‹ç›´å‰ã®æ™‚ã«å±…ã‚‹é ‚ç‚¹)
+Tips:(i->j)ã®æœ€çŸ­çµŒè·¯ã¯é€†ã‹ã‚‰ãŸã©ã‚‹ã¨j,prev[i][j],prev[i][prev[i][j]],prev[i][prev[i][prev[i][j]]],,,,,
+*/
+void warshallFloyd(vector<vector<int> >& AdjMat,vector<vector<int> >& prev)
+{
+    int V = AdjMat.size();
+    for(int i = 0;i < V;++i)
+        for(int j = 0;j < V;++j)
+            for(int k = 0;k < V;++k)
+            {
+                if(AdjMat[i][k] + AdjMat[k][j] < AdjMat[i][j])
+                {
+                    AdjMat[i][j] = AdjMat[i][k]+AdjMat[k][j];
+                    prev[i][j] = prev[k][j];
+                }
+            }
+}
+
+bool cmp(const ii& a,const ii& b)
+{
+    return a.first < b.first;
+}
+
+/*
+Initialization:AdjList[i][j].first = (iã‚’å§‹ç‚¹ã¨ã™ã‚‹æã®ã‚‚ã†ä¸€æ–¹ã®ç‚¹),AdjList[i][j].second = (iã‚’å§‹ç‚¹ã¨ã—ã€AdjList[i][j].firstã‚’ã‚‚ã†ä¸€æ–¹ã®ç‚¹ã¨ã™ã‚‹æã®é‡ã¿)
+Return:dist[i] = ((s-> i)ã®æœ€çŸ­è·é›¢)
+*/
+typedef pair<int,int> ii;
+void dikstra(vector<int>& dist,vector<vector<ii> >& AdjList,int s)
+{
+    priority_queue<ii,vector<ii>,decltype(&cmp)> pq(cmp);
+    pq.emplace(0,s);
+    for(int i = 0;i < dist.size();++i)
+        dist[i] = INF;
+    dist[s] = 0;
+
+    while(!pq.empty())
+    {
+        ii du = pq.top();pq.pop();
+        if(du.first > dist[du.second]) continue;
+
+        for(auto& vw:AdjList[du.second])
+        {
+            if(dist[du.second] + vw.second >= dist[vw.first]) continue;
+
+            dist[vw.first] = dist[du.second] + vw.second;
+            pq.emplace(dist[vw.first],vw.first);
+        }
+    }
+}
+
+/*
+Initialization:AdjList[i][j].first = (iã‚’å§‹ç‚¹ã¨ã™ã‚‹æã®ã‚‚ã†ä¸€æ–¹ã®ç‚¹),AdjList[i][j].second = (iã‚’å§‹ç‚¹ã¨ã—ã€AdjList[i][j].firstã‚’ã‚‚ã†ä¸€æ–¹ã®ç‚¹ã¨ã™ã‚‹æã®é‡ã¿)
+Return:dist[i] = ((s-> i)ã®æœ€çŸ­è·é›¢),parent[i] = ((s->i)ã¾ã§ã®æœ€çŸ­çµŒè·¯ã«ãŠã„ã¦ã€iã«åˆ°é”ã™ã‚‹ç›´å‰ã«ã„ã‚‹é ‚ç‚¹)
+Tips:(i->j)ã®æœ€çŸ­çµŒè·¯ã¯é€†ã‹ã‚‰ãŸã©ã‚‹ã¨j,parent[j],parent[parent[j]],parent[parent[parent[j]]],,,,,,,
+*/
+typedef pair<int,int> ii;
+void dikstra(vector<int>& dist,vector<vector<ii> >& AdjList,vector<int>& parent,int s)
+{
+    priority_queue<ii,vector<ii>,decltype(&cmp)> pq(cmp);
+    pq.emplace(0,s);
+    for(int i = 0;i < dist.size();++i)
+        dist[i] = INF;
+    dist[s] = 0;
+
+    while(!pq.empty())
+    {
+        ii du = pq.top();pq.pop();
+        if(du.first > dist[du.second]) continue;
+
+        for(auto& vw:AdjList[du.second])
+        {
+            if(dist[du.second] + vw.second >= dist[vw.first]) continue;
+
+            dist[vw.first] = dist[du.second] + vw.second;
+            parent[vw.first] = du.second;
+            pq.emplace(dist[vw.first],vw.first);
+        }
+    }
 }
